@@ -60,9 +60,6 @@ class Reviews(models.Model):
         verbose_name = 'Отзыв'
         verbose_name_plural = 'Отзывы'
 
-    def __str__(self) -> str:
-        return self.name
-
 
 class Comments(models.Model):
     author = models.ForeignKey(
@@ -78,6 +75,3 @@ class Comments(models.Model):
     class Meta:
         verbose_name = 'Комментарий'
         verbose_name_plural = 'Комментарии'
-
-    def __str__(self) -> str:
-        return self.name
