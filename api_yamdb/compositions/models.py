@@ -17,7 +17,7 @@ class Category(models.Model):
         return self.name
 
 
-class Genres(models.Model):
+class Genre(models.Model):
     name = models.CharField(max_length=256, verbose_name='Жанр')
     slug = models.CharField(max_length=50, verbose_name='Слаг')
 
@@ -26,11 +26,11 @@ class Genres(models.Model):
         verbose_name_plural = 'Жанры'
 
 
-class Titles(models.Model):
+class Title(models.Model):
     name = models.CharField(max_length=256, verbose_name='Произведение')
     year = models.IntegerField(verbose_name='Год произведения')
     genre = models.ForeignKey(
-        Genres,
+        Genre,
         on_delete=models.SET_NULL,
         related_name='titles_genre',
         null=True
@@ -52,7 +52,7 @@ class Titles(models.Model):
         return self.name
 
 
-class Reviews(models.Model):
+class Review(models.Model):
     text = models.TextField('Текст отзыва')
     score = models.IntegerField('Оценка произведения', default=0)
 
@@ -61,7 +61,7 @@ class Reviews(models.Model):
         verbose_name_plural = 'Отзывы'
 
 
-class Comments(models.Model):
+class Comment(models.Model):
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='comments'
     )
