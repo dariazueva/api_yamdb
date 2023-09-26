@@ -37,14 +37,7 @@ class Title(models.Model):
         through='GenreTitle',
         verbose_name='Жанр'
     )
-    # genre = models.ForeignKey(
-    #     Genre,
-    #     on_delete=models.SET_NULL,
-    #     related_name='titles_genre',
-    #     null=True,
-    #     verbose_name='Жанр'
-    # )
-    rating = models.IntegerField(verbose_name='Рэйтинг', default=0)
+    rating = models.IntegerField(verbose_name='Рэйтинг', default=None)
     category = models.OneToOneField(
         Category,
         on_delete=models.SET_NULL,
@@ -64,7 +57,7 @@ class Title(models.Model):
 
 class GenreTitle(models.Model):
     title = models.ForeignKey(Title, on_delete=models.CASCADE)
-    ganre = models.ForeignKey(Genre, on_delete=models.CASCADE)
+    genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
 
     def __str__(self):
         return f'{self.ganre} {self.title}'

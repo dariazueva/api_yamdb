@@ -1,5 +1,5 @@
 from rest_framework import serializers, validators
-from reviews.models import Category, Genre, Title, Review, Comment
+from reviews.models import Category, Genre, Title, Review, Comment, GenreTitle
 import datetime as dt
 
 CHOICES = [rating for rating in range(11)]
@@ -37,10 +37,18 @@ class GenreSerializer(serializers.ModelSerializer):
         fields = ('name', 'slug')
 
 
+class GenreTitleSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(source='genre.name')
+    slug = serializers.CharField(source='genre.slug')
+
+    class Meta:
+        model = GenreTitle
+        fields = ('name', 'slug')
+
+
 class TitleSerializer(serializers.ModelSerializer):
-    # genre = GenreSerializer(many=True)
-    # category = CategorySerializer()
-    rating = serializers.ChoiceField(choices=CHOICES)
+    genre = GenreTitleSerializer(many=True)
+    category = CategorySerializer()
 
     class Meta:
         model = Title
@@ -55,9 +63,10 @@ class TitleSerializer(serializers.ModelSerializer):
                 'Год выпуска не может быть больше текущего')
         return value
 
-    def create(self, validated_data):
-        title = Title.objects.create(**validated_data)
-        return title
+    def validate_rating(self, value):
+        if value < 0 or value > 10:
+            raise serializers.ValidationError('Рэйтинг должен быть от 0 до 10')
+        return value
 
 
 class ReviewSerializer(serializers.ModelSerializer):
