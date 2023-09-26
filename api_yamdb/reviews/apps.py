@@ -3,4 +3,5 @@ from django.apps import AppConfig
 
 class CompositionsConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'compositions'
+    name = 'reviews'
+    verbose_name = ''
