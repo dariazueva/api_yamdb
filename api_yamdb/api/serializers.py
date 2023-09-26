@@ -1,5 +1,5 @@
 from rest_framework import serializers, validators
-from compositions.models import Category, Genre, Title, Review, Comment
+from reviews.models import Category, Genre, Title, Review, Comment
 import datetime as dt
 
 CHOICES = [rating for rating in range(11)]

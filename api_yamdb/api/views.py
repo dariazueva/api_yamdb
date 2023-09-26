@@ -1,7 +1,7 @@
 from rest_framework import (viewsets, mixins,
                             pagination)
 
-from compositions.models import Category, Genre, Title, Review, Comment
+from reviews.models import Category, Genre, Title, Review, Comment
 from .serializers import (CategorySerializer, GenreSerializer,
                           TitleSerializer, ReviewSerializer, CommentSerializer)
 from .filter import FilterByName, ExtendedFilter
