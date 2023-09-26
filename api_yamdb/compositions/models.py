@@ -32,13 +32,18 @@ class Genre(models.Model):
 class Title(models.Model):
     name = models.CharField(max_length=256, verbose_name='Произведение')
     year = models.IntegerField(verbose_name='Год произведения')
-    genre = models.ForeignKey(
+    genre = models.ManyToManyField(
         Genre,
-        on_delete=models.SET_NULL,
-        related_name='titles_genre',
-        null=True,
+        through='GenreTitle',
         verbose_name='Жанр'
     )
+    # genre = models.ForeignKey(
+    #     Genre,
+    #     on_delete=models.SET_NULL,
+    #     related_name='titles_genre',
+    #     null=True,
+    #     verbose_name='Жанр'
+    # )
     rating = models.IntegerField(verbose_name='Рэйтинг', default=0)
     category = models.OneToOneField(
         Category,
@@ -57,9 +62,25 @@ class Title(models.Model):
         return self.name
 
 
+class GenreTitle(models.Model):
+    title = models.ForeignKey(Title, on_delete=models.CASCADE)
+    ganre = models.ForeignKey(Genre, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.ganre} {self.title}'
+
+
 class Review(models.Model):
+    title = models.ForeignKey(Title, on_delete=models.CASCADE)
+    author = models.ForeignKey(
+        User, on_delete=models.CASCADE)
     text = models.TextField('Текст отзыва')
     score = models.IntegerField('Оценка произведения', default=0)
+    pub_date = models.DateTimeField(
+        'Дата добавления',
+        auto_now_add=True,
+        db_index=True
+    )
 
     class Meta:
         verbose_name = 'Отзыв'
@@ -70,6 +91,7 @@ class Comment(models.Model):
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='comments'
     )
+    review = models.ForeignKey(Review, on_delete=models.CASCADE)
     text = models.TextField('Текст комментария')
     pub_date = models.DateTimeField(
         'Дата добавления',

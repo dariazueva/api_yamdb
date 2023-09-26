@@ -1,4 +1,4 @@
-from rest_framework import (viewsets, permissions, mixins,
+from rest_framework import (viewsets, mixins,
                             pagination)
 
 from compositions.models import Category, Genre, Title, Review, Comment
