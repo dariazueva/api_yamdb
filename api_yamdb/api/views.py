@@ -14,6 +14,7 @@ class CategoryViewSet(FilterByName, mixins.ListModelMixin,
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     pagination_class = pagination.LimitOffsetPagination
+    lookup_field = 'slug'
 
 
 class GenreViewSet(FilterByName, mixins.ListModelMixin,
@@ -23,6 +24,7 @@ class GenreViewSet(FilterByName, mixins.ListModelMixin,
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
     pagination_class = pagination.LimitOffsetPagination
+    lookup_field = 'slug'
 
 
 class TitlesViewSet(ExtendedFilter, viewsets.ModelViewSet):

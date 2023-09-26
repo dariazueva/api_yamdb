@@ -47,14 +47,13 @@ class GenreTitleSerializer(serializers.ModelSerializer):
 
 
 class TitleSerializer(serializers.ModelSerializer):
-    genre = GenreTitleSerializer(many=True)
+    genre = GenreTitleSerializer(many=True,)
     category = CategorySerializer()
 
     class Meta:
         model = Title
         fields = ('id', 'name', 'year', 'rating',
-                  'description', 'genre', 'category')
-        validators = []
+                  'description', 'genre', 'category')        
 
     def validate_year(self, value):
         year = dt.date.today().year

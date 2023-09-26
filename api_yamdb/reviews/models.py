@@ -37,7 +37,7 @@ class Title(models.Model):
         through='GenreTitle',
         verbose_name='Жанр'
     )
-    rating = models.IntegerField(verbose_name='Рэйтинг', default=None)
+    rating = models.IntegerField(verbose_name='Рэйтинг', default=0)
     category = models.OneToOneField(
         Category,
         on_delete=models.SET_NULL,
