@@ -1,23 +1,47 @@
-from rest_framework import serializers
+from rest_framework import serializers, validators
 from compositions.models import Category, Genre, Title, Review, Comment
+import datetime as dt
+
+CHOICES = [rating for rating in range(11)]
 
 
 class CategorySerializer(serializers.ModelSerializer):
+    name = serializers.CharField(
+        max_length=256,
+        validators=[validators.UniqueValidator(
+            queryset=Category.objects.all())])
+    slug = serializers.SlugField(
+        max_length=50,
+        validators=[validators.UniqueValidator(
+            queryset=Category.objects.all())]
+    )
+
     class Meta:
         model = Category
-        fields = '__all__'
+        fields = ('name', 'slug')
 
 
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genre
-        fields = '__all__'
+        fields = ('name', 'slug')
 
 
 class TitleSerializer(serializers.ModelSerializer):
+    rating = serializers.ChoiceField(choices=CHOICES)
+
     class Meta:
         model = Title
-        fields = '__all__'
+        fields = ('id', 'name', 'year', 'rating',
+                  'description', 'genre', 'category')
+        validators = []
+
+    def validate_year(self, value):
+        year = dt.date.today().year
+        if (year < value):
+            raise serializers.ValidationError(
+                'Год выпуска не может быть больше текущего')
+        return value
 
 
 class ReviewSerializer(serializers.ModelSerializer):

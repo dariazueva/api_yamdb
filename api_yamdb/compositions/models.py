@@ -25,6 +25,9 @@ class Genre(models.Model):
         verbose_name = 'Жанр'
         verbose_name_plural = 'Жанры'
 
+    def __str__(self) -> str:
+        return self.name
+
 
 class Title(models.Model):
     name = models.CharField(max_length=256, verbose_name='Произведение')
@@ -33,14 +36,16 @@ class Title(models.Model):
         Genre,
         on_delete=models.SET_NULL,
         related_name='titles_genre',
-        null=True
+        null=True,
+        verbose_name='Жанр'
     )
     rating = models.IntegerField(verbose_name='Рэйтинг', default=0)
-    category = models.ForeignKey(
+    category = models.OneToOneField(
         Category,
         on_delete=models.SET_NULL,
         related_name='titles_categories',
-        null=True
+        null=True,
+        verbose_name='Категория'
     )
     description = models.TextField('Описание произведения', blank=True)
 
