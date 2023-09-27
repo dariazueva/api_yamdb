@@ -31,7 +31,7 @@ class TitleGenreSerializer(serializers.ModelSerializer):
 
 
 class TitleSerializer(serializers.ModelSerializer):
-    genre = TitleGenreSerializer(many=True)
+    genre = GenreSerializer(many=True)
     category = CategorySerializer()
 
     class Meta:
