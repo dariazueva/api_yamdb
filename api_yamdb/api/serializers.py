@@ -1,8 +1,6 @@
 from rest_framework import serializers, validators
-from reviews.models import Category, Genre, Title, Review, Comment, GenreTitle
+from reviews.models import Category, Genre, Title, Review, Comment, TitleGenre
 import datetime as dt
-
-CHOICES = [rating for rating in range(11)]
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -37,23 +35,23 @@ class GenreSerializer(serializers.ModelSerializer):
         fields = ('name', 'slug')
 
 
-class GenreTitleSerializer(serializers.ModelSerializer):
-    name = serializers.CharField(source='genre.name')
-    slug = serializers.CharField(source='genre.slug')
+class TitleGenreSerializer(serializers.ModelSerializer):
+    name = serializers.SlugField()
+    slug = serializers.SlugField()
 
     class Meta:
-        model = GenreTitle
+        model = TitleGenre
         fields = ('name', 'slug')
 
 
 class TitleSerializer(serializers.ModelSerializer):
-    genre = GenreTitleSerializer(many=True,)
+    genre = TitleGenreSerializer(many=True)
     category = CategorySerializer()
 
     class Meta:
         model = Title
         fields = ('id', 'name', 'year', 'rating',
-                  'description', 'genre', 'category')        
+                  'description', 'genre', 'category')
 
     def validate_year(self, value):
         year = dt.date.today().year
