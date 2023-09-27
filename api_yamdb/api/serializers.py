@@ -36,8 +36,8 @@ class GenreSerializer(serializers.ModelSerializer):
 
 
 class TitleGenreSerializer(serializers.ModelSerializer):
-    name = serializers.SlugField()
-    slug = serializers.SlugField()
+    name = serializers.CharField()
+    slug = serializers.CharField()
 
     class Meta:
         model = TitleGenre
@@ -45,7 +45,7 @@ class TitleGenreSerializer(serializers.ModelSerializer):
 
 
 class TitleSerializer(serializers.ModelSerializer):
-    genre = TitleGenreSerializer(many=True)
+    genre = GenreSerializer(many=True)
     category = CategorySerializer()
 
     class Meta:
