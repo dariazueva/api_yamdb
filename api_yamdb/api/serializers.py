@@ -1,4 +1,4 @@
-from rest_framework import serializers, validators
+from rest_framework import serializers
 from reviews.models import Category, Genre, Title, Review, Comment, TitleGenre
 import datetime as dt
 
