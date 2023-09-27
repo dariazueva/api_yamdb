@@ -4,6 +4,9 @@ from django.contrib import admin
 from .models import Category, Genre, TitleGenre, Title, Review, Comment
 
 
+admin.site.empty_value_display = 'Не задано'
+
+
 class GenreResource(resources.ModelResource):
 
     class Meta:
@@ -60,7 +63,7 @@ class TitleAdmin(ImportExportModelAdmin):
     )
 
     def get_genres(self, obj):
-        return ' '.join([genre.name for genre in obj.genre.all()])
+        return ', '.join([genre.name for genre in obj.genre.all()])
     get_genres.short_description = 'Жанр'
 
 
@@ -106,6 +109,3 @@ class CommentAdmin(ImportExportModelAdmin):
 
 
 admin.site.register(Comment, CommentAdmin)
-
-
-admin.site.empty_value_display = 'Не задано'
