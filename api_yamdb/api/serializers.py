@@ -4,15 +4,8 @@ import datetime as dt
 
 
 class CategorySerializer(serializers.ModelSerializer):
-    name = serializers.CharField(
-        max_length=256,
-        validators=[validators.UniqueValidator(
-            queryset=Category.objects.all())])
-    slug = serializers.SlugField(
-        max_length=50,
-        validators=[validators.UniqueValidator(
-            queryset=Category.objects.all())]
-    )
+    name = serializers.CharField(max_length=256)
+    slug = serializers.SlugField(max_length=50)
 
     class Meta:
         model = Category
@@ -20,15 +13,8 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class GenreSerializer(serializers.ModelSerializer):
-    name = serializers.CharField(
-        max_length=256,
-        validators=[validators.UniqueValidator(
-            queryset=Genre.objects.all())])
-    slug = serializers.SlugField(
-        max_length=50,
-        validators=[validators.UniqueValidator(
-            queryset=Genre.objects.all())]
-    )
+    name = serializers.CharField(max_length=256)
+    slug = serializers.SlugField(max_length=50)
 
     class Meta:
         model = Genre
@@ -45,7 +31,7 @@ class TitleGenreSerializer(serializers.ModelSerializer):
 
 
 class TitleSerializer(serializers.ModelSerializer):
-    genre = GenreSerializer(many=True)
+    genre = TitleGenreSerializer(many=True)
     category = CategorySerializer()
 
     class Meta:
@@ -64,6 +50,54 @@ class TitleSerializer(serializers.ModelSerializer):
         if value < 0 or value > 10:
             raise serializers.ValidationError('Рэйтинг должен быть от 0 до 10')
         return value
+
+    def create(self, validated_data):
+        genre_data = validated_data.pop('genre', [])
+        category_data = validated_data.pop('category', None)
+
+        title = Title.objects.create(**validated_data)
+
+        for genre_item in genre_data:
+            genre, created = Genre.objects.get_or_create(
+                name=genre_item['name'],
+                slug=genre_item['slug']
+            )
+            title.genre.add(genre)
+
+        if category_data:
+            category, created = Category.objects.get_or_create(
+                name=category_data['name'],
+                slug=category_data['slug']
+            )
+            title.category = category
+
+        title.save()
+        return title
+
+    def update(self, instance, validated_data):
+        genre_data = validated_data.pop('genre', [])
+        category_data = validated_data.pop('category', None)
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        instance.genre.clear()
+        for genre_item in genre_data:
+            genre, created = Genre.objects.get_or_create(
+                name=genre_item['name'],
+                slug=genre_item['slug']
+            )
+            instance.genre.add(genre)
+
+        if category_data:
+            category, created = Category.objects.get_or_create(
+                name=category_data['name'],
+                slug=category_data['slug']
+            )
+            instance.category = category
+
+        instance.save()
+        return instance
 
 
 class ReviewSerializer(serializers.ModelSerializer):

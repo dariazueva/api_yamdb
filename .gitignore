@@ -163,3 +163,4 @@ api_yamdb/reviews/migrations/0006_rename_genretitle_titlegenre.py
 api_yamdb/reviews/migrations/0007_auto_20230927_1236.py
 api_yamdb/reviews/migrations/0008_auto_20230927_1237.py
 api_yamdb/reviews/migrations/0009_alter_title_category.py
+api_yamdb/reviews/migrations/0002_auto_20230927_2235.py
