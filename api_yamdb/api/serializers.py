@@ -30,9 +30,19 @@ class TitleGenreSerializer(serializers.ModelSerializer):
         fields = ('name', 'slug')
 
 
-class TitleSerializer(serializers.ModelSerializer):
+class TitleReadSerializer(serializers.ModelSerializer):
     genre = GenreSerializer(many=True)
     category = CategorySerializer()
+
+    class Meta:
+        model = Title
+        fields = ('id', 'name', 'year', 'rating',
+                  'description', 'genre', 'category')
+
+
+class TitleWriteSerializer(serializers.ModelSerializer):
+    genre = serializers.SlugField()
+    category = serializers.SlugField()
 
     class Meta:
         model = Title

@@ -3,7 +3,8 @@ from rest_framework import (viewsets, mixins,
 
 from reviews.models import Category, Genre, Title, Review, Comment
 from .serializers import (CategorySerializer, GenreSerializer,
-                          TitleSerializer, ReviewSerializer, CommentSerializer)
+                          ReviewSerializer, CommentSerializer,
+                          TitleReadSerializer, TitleWriteSerializer)
 from .filter import FilterByName, ExtendedFilter
 
 
@@ -29,8 +30,12 @@ class GenreViewSet(FilterByName, mixins.ListModelMixin,
 
 class TitlesViewSet(ExtendedFilter, viewsets.ModelViewSet):
     queryset = Title.objects.all()
-    serializer_class = TitleSerializer
     pagination_class = pagination.LimitOffsetPagination
+
+    def get_serializer_class(self):
+        if self.action in ('list', 'retrieve'):
+            return TitleReadSerializer
+        return TitleWriteSerializer
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
