@@ -52,6 +52,14 @@ class UserRegistrationSerializer(CustomUserSerializer):
     class Meta:
         model = CustomUser
         fields = ("username", "email")
+    
+    def create(self, validated_data):
+        user = CustomUser(
+            email=validated_data['email'],
+            username=validated_data['username']
+        )
+        user.save()
+        return user
 
 
 class CustomTokenObtainSerializer(TokenObtainSerializer):

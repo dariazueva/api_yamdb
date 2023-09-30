@@ -10,11 +10,15 @@ from users.serializers import UserRegistrationSerializer, CustomTokenObtainSeria
 
 from rest_framework.response import Response
 from django.views.decorators.csrf import csrf_exempt
+from rest_framework.mixins import CreateModelMixin
+
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_protect
 
 
 
-@csrf_exempt
-class UserRegistrationViewSet(viewsets.ModelViewSet):
+@method_decorator(csrf_exempt, name='dispatch')
+class UserRegistrationViewSet(CreateModelMixin, viewsets.GenericViewSet):
     """Создание нового пользователя."""
 
     serializer_class = UserRegistrationSerializer
