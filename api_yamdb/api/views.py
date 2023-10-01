@@ -1,20 +1,15 @@
 from django.contrib.auth import get_user_model
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework import viewsets, status
 from rest_framework.generics import GenericAPIView
+from rest_framework.mixins import CreateModelMixin
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from users.models import CustomUser
 from users.serializers import UserRegistrationSerializer, CustomTokenObtainSerializer
-
-
-from rest_framework.response import Response
-from django.views.decorators.csrf import csrf_exempt
-from rest_framework.mixins import CreateModelMixin
-
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_protect
-
 
 
 @method_decorator(csrf_exempt, name='dispatch')

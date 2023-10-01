@@ -1,3 +1,5 @@
+import uuid
+
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
@@ -11,6 +13,8 @@ class CustomUser(AbstractUser):
     last_name = models.CharField('Фамилия', max_length=150, blank=True)
     bio = models.CharField('Биография', max_length=256, blank=True)
     role = models.CharField('Статус', max_length=50, blank=True, default='user')
+    confirmation_code = models.UUIDField(
+        verbose_name="Код подтверждения", default=str(uuid.uuid4()))
 
     class Meta:
         verbose_name = 'Пользователь'
