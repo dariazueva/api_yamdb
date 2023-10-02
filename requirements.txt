@@ -7,3 +7,4 @@ pytest-django==4.4.0
 pytest-pythonpath==0.7.3
 django-filter==23.3
 django-import-export
+djangorestframework-simplejwt
