@@ -6,7 +6,7 @@ class Util:
 
         send_mail(
             subject='Yamdb confirmation code',
-            message='Your confirmation code.',
+            message=f'Ваш проверочный код: {confirmation_code}',
             from_email='yamdb@yandex.ru',
             recipient_list=[email],
             fail_silently=False)

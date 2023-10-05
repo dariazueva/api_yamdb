@@ -1,6 +1,17 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+import uuid
+
+ADMIN = 'admin'
+MODERATOR = 'moderator'
+USER = 'user'
+USER_ROLES = [
+    (USER, 'user'),
+    (MODERATOR, 'moderator'),
+    (ADMIN, 'admin'),
+]
+
 
 class CustomUser(AbstractUser):
     """Кастомная модель пользователя."""
@@ -10,7 +21,8 @@ class CustomUser(AbstractUser):
     first_name = models.CharField('Имя', max_length=150, blank=True)
     last_name = models.CharField('Фамилия', max_length=150, blank=True)
     bio = models.CharField('Биография', max_length=256, blank=True)
-    role = models.CharField('Статус', max_length=50, blank=True, default='user')
+    role = models.CharField('Статус', max_length=50, blank=False,
+                            choices=USER_ROLES, default='user')
     confirmation_code = models.CharField(
         verbose_name="Код подтверждения", max_length=150)
 
