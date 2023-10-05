@@ -1,6 +1,7 @@
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 from django.contrib import admin
+from django.db.models import Avg
 from .models import Category, Genre, TitleGenre, Title, Review, Comment
 
 
@@ -52,7 +53,7 @@ class TitleGenreInline(admin.TabularInline):
 
 class TitleAdmin(ImportExportModelAdmin):
     resource_classes = [TitleResource]
-    list_display = ('name', 'year', 'rating',
+    list_display = ('name', 'year', 'get_rating',
                     'category', 'get_genres', 'description')
     list_filter = ('category', 'genre')
     search_fields = ('name', 'year', 'rating',
@@ -65,6 +66,12 @@ class TitleAdmin(ImportExportModelAdmin):
     def get_genres(self, obj):
         return ', '.join([genre.name for genre in obj.genre.all()])
     get_genres.short_description = 'Жанр'
+
+    def get_rating(self, obj):
+        reviews = obj.review_set.all()
+        average_score = reviews.aggregate(Avg('score'))['score__avg']
+        return average_score if average_score is not None else 0
+    get_rating.short_description = 'Рэйтинг'
 
 
 admin.site.register(Title, TitleAdmin)

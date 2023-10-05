@@ -1,5 +1,5 @@
 from rest_framework import (viewsets, mixins,
-                            pagination)
+                            pagination, permissions)
 
 from reviews.models import Category, Genre, Title, Review, Comment
 from .serializers import (CategorySerializer, GenreSerializer,
@@ -31,6 +31,7 @@ class GenreViewSet(FilterByName, mixins.ListModelMixin,
 class TitlesViewSet(ExtendedFilter, viewsets.ModelViewSet):
     queryset = Title.objects.all()
     pagination_class = pagination.LimitOffsetPagination
+    http_method_names = ['get', 'post', 'patch', 'delete']
 
     def get_serializer_class(self):
         if self.action in ('list', 'retrieve'):
