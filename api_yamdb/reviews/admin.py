@@ -70,7 +70,7 @@ class TitleAdmin(ImportExportModelAdmin):
     def get_rating(self, obj):
         reviews = obj.review_set.all()
         average_score = reviews.aggregate(Avg('score'))['score__avg']
-        return average_score if average_score is not None else 0
+        return round(average_score) if average_score is not None else 0
     get_rating.short_description = 'Рэйтинг'
 
 
