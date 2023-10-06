@@ -1,3 +1,6 @@
+import re
+
+from django.contrib.auth.tokens import default_token_generator
 from django.core.validators import RegexValidator
 from rest_framework import serializers, status
 from rest_framework.exceptions import NotFound, ValidationError
@@ -6,10 +9,6 @@ from rest_framework_simplejwt.serializers import TokenObtainSerializer
 
 from api.utils import Util
 from users.models import CustomUser
-
-from django.contrib.auth.tokens import default_token_generator
-import re
-
 
 USERNAME_REGEX = r'^[\w.@+-]+$'
 

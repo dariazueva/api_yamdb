@@ -1,6 +1,6 @@
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from rest_framework import filters, viewsets, status
+from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.mixins import CreateModelMixin
 from rest_framework.pagination import PageNumberPagination
@@ -8,12 +8,10 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 
-from users.models import CustomUser
 from api.permissions import IsAdmin
-from api.serializers import (UserRegistrationSerializer,
-                             CustomTokenObtainSerializer,
-                             CustomUserSerializer
-                             )
+from api.serializers import (CustomTokenObtainSerializer, CustomUserSerializer,
+                             UserRegistrationSerializer)
+from users.models import CustomUser
 
 
 @method_decorator(csrf_exempt, name='dispatch')
