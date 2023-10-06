@@ -1,5 +1,5 @@
 from django.core.validators import RegexValidator
-from rest_framework import serializers
+from rest_framework import serializers, status
 from rest_framework.exceptions import NotFound, ValidationError
 from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.serializers import TokenObtainSerializer
@@ -8,48 +8,10 @@ from api.utils import Util
 from users.models import CustomUser
 
 from django.contrib.auth.tokens import default_token_generator
-# from random import randint
 import re
 
 
 USERNAME_REGEX = r'^[\w.@+-]+$'
-
-
-class CustomUserSerializer(serializers.ModelSerializer):
-    """Сериализатор кастомного пользователя."""
-
-    email = serializers.EmailField(
-        max_length=254,
-        required=True,
-        validators=[UniqueValidator(queryset=CustomUser.objects.all())],
-    )
-
-    username = serializers.CharField(
-        max_length=150,
-        required=True,
-        validators=[
-            UniqueValidator(queryset=CustomUser.objects.all()),
-            RegexValidator(
-                regex=USERNAME_REGEX,
-                message='Имя пользователя может содержать '
-                'только буквы, цифры и следующие символы: '
-                '@/./+/-/_',
-            ),
-        ],
-    )
-
-    class Meta:
-        model = CustomUser
-        fields = (
-            'username', 'email', 'first_name', 'last_name', 'bio', 'role'
-        )
-
-    def validate(self, attrs):
-        data = super().validate(attrs)
-        if 'username' in data:
-            if data['username'].lower() == 'me':
-                raise ValidationError('<me> can not be a username')
-        return data
 
 
 class UserRegistrationSerializer(serializers.Serializer):
@@ -76,19 +38,39 @@ class UserRegistrationSerializer(serializers.Serializer):
         fields = ('username', 'email')
 
     def create(self, validated_data):
-        username = validated_data['username']
         email = validated_data['email']
+        username = validated_data['username']
 
-        user, created = CustomUser.objects.get_or_create(
-            username=username,
-            email=email
-        )
+        existing_user_by_email = CustomUser.objects.filter(email=email).first()
+
+        if existing_user_by_email:
+            if existing_user_by_email.username != username:
+                raise serializers.ValidationError(
+                    {'error': 'User with this email already exists '
+                     'but with a different username.'},
+                    code=status.HTTP_400_BAD_REQUEST
+                )
+            return existing_user_by_email
+
+        existing_user_by_username = CustomUser.objects.filter(
+            username=username).first()
+
+        if existing_user_by_username:
+            if existing_user_by_username.email != email:
+                raise serializers.ValidationError(
+                    {'error': 'User with this username already exists '
+                     'but with a different email.'},
+                    code=status.HTTP_400_BAD_REQUEST
+                )
+            return existing_user_by_username
+        user = CustomUser.objects.create(email=email, username=username)
         confirmation_code = default_token_generator.make_token(user)
-        Util.send_mail(validated_data['email'], confirmation_code)
+        Util.send_mail(email, confirmation_code)
         return user
 
     def validate(self, data):
         username = data.get('username')
+
         if username:
             if username == 'me' or not re.match(USERNAME_REGEX, username):
                 raise ValidationError('<me> can not be a username')
