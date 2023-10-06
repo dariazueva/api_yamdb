@@ -150,3 +150,8 @@ media/
 api_yamdb/reviews/migrations/0001_initial.py
 api_yamdb/reviews/migrations/0002_auto_20231005_0959.py
 api_yamdb/users/migrations/0002_alter_customuser_email.py
+api_yamdb/reviews/migrations/0003_auto_20231006_2157.py
+api_yamdb/reviews/migrations/0004_auto_20231006_2158.py
+api_yamdb/reviews/migrations/0005_auto_20231006_2208.py
+api_yamdb/users/migrations/0003_alter_customuser_role.py
+api_yamdb/users/migrations/0004_alter_customuser_role.py

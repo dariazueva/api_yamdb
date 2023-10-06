@@ -8,7 +8,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 
-from api.permissions import IsAdmin
+from api.permissions import IsAdmin, IsAdminOrReadOnly, IsAuthorModeratorAdmin
 from api.serializers import (CustomTokenObtainSerializer, CustomUserSerializer,
                              UserRegistrationSerializer)
 from users.models import CustomUser
@@ -72,6 +72,7 @@ class CustomUserViewSet(viewsets.ModelViewSet):
         serializer.save(role='user')
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+
 class CategoryViewSet(FilterByName, mixins.ListModelMixin,
                       mixins.CreateModelMixin,
                       mixins.DestroyModelMixin,
@@ -80,6 +81,7 @@ class CategoryViewSet(FilterByName, mixins.ListModelMixin,
     serializer_class = CategorySerializer
     pagination_class = pagination.LimitOffsetPagination
     lookup_field = 'slug'
+    permission_classes = (IsAdminOrReadOnly, )
 
 
 class GenreViewSet(FilterByName, mixins.ListModelMixin,
@@ -90,12 +92,14 @@ class GenreViewSet(FilterByName, mixins.ListModelMixin,
     serializer_class = GenreSerializer
     pagination_class = pagination.LimitOffsetPagination
     lookup_field = 'slug'
+    permission_classes = (IsAdminOrReadOnly, )
 
 
 class TitlesViewSet(ExtendedFilter, viewsets.ModelViewSet):
     queryset = Title.objects.all()
     pagination_class = pagination.LimitOffsetPagination
     http_method_names = ['get', 'post', 'patch', 'delete']
+    permission_classes = (IsAdminOrReadOnly, )
 
     def get_serializer_class(self):
         if self.action in ('list', 'retrieve'):

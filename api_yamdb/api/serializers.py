@@ -135,9 +135,18 @@ class CustomUserSerializer(serializers.ModelSerializer):
                   'last_name', 'bio', 'role')
         model = CustomUser
 
+
 class CategorySerializer(serializers.ModelSerializer):
-    name = serializers.CharField(max_length=256)
-    slug = serializers.SlugField(max_length=50)
+    name = serializers.CharField(
+        max_length=256,
+        validators=[
+            UniqueValidator(queryset=Category.objects.all())],
+    )
+    slug = serializers.SlugField(
+        max_length=50,
+        validators=[
+            UniqueValidator(queryset=Category.objects.all())],
+    )
 
     class Meta:
         model = Category
@@ -145,8 +154,16 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class GenreSerializer(serializers.ModelSerializer):
-    name = serializers.CharField(max_length=256)
-    slug = serializers.SlugField(max_length=50)
+    name = serializers.CharField(
+        max_length=256,
+        validators=[
+            UniqueValidator(queryset=Genre.objects.all())],
+    )
+    slug = serializers.SlugField(
+        max_length=50,
+        validators=[
+            UniqueValidator(queryset=Genre.objects.all())],
+    )
 
     class Meta:
         model = Genre
@@ -175,7 +192,10 @@ class TitleReadSerializer(serializers.ModelSerializer):
     def get_rating(self, obj):
         reviews = obj.review_set.all()
         average_score = reviews.aggregate(Avg('score'))['score__avg']
-        return round(average_score) if average_score is not None else 0
+        if average_score is not None:
+            return round(average_score)
+        return None
+        return round(average_score) if average_score is not None else None
 
 
 class TitleWriteSerializer(serializers.ModelSerializer):
