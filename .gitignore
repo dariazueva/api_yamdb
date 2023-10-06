@@ -147,13 +147,3 @@ dmypy.json
 
 # папки со статикой и медиа
 media/
-
-api_yamdb/reviews/migrations/0001_initial.py
-api_yamdb/reviews/migrations/0002_auto_20231005_0959.py
-api_yamdb/users/migrations/0001_initial.py
-api_yamdb/users/migrations/0002_customuser_confirmation_code.py
-api_yamdb/users/migrations/0003_alter_customuser_confirmation_code.py
-api_yamdb/users/migrations/0005_auto_20231004_1433.py
-api_yamdb/users/migrations/0004_alter_customuser_confirmation_code.py
-api_yamdb/users/migrations/0001_initial.py
-api_yamdb/users/migrations/0001_initial.py

@@ -1,6 +1,6 @@
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from rest_framework import filters, status, viewsets
+from rest_framework import filters, status, viewsets, mixins, pagination
 from rest_framework.decorators import action
 from rest_framework.mixins import CreateModelMixin
 from rest_framework.pagination import PageNumberPagination
@@ -12,6 +12,12 @@ from api.permissions import IsAdmin
 from api.serializers import (CustomTokenObtainSerializer, CustomUserSerializer,
                              UserRegistrationSerializer)
 from users.models import CustomUser
+
+from reviews.models import Category, Genre, Title, Review, Comment
+from .serializers import (CategorySerializer, GenreSerializer,
+                          ReviewSerializer, CommentSerializer,
+                          TitleReadSerializer, TitleWriteSerializer)
+from .filter import FilterByName, ExtendedFilter
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -65,3 +71,43 @@ class CustomUserViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save(role='user')
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+class CategoryViewSet(FilterByName, mixins.ListModelMixin,
+                      mixins.CreateModelMixin,
+                      mixins.DestroyModelMixin,
+                      viewsets.GenericViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    pagination_class = pagination.LimitOffsetPagination
+    lookup_field = 'slug'
+
+
+class GenreViewSet(FilterByName, mixins.ListModelMixin,
+                   mixins.CreateModelMixin,
+                   mixins.DestroyModelMixin,
+                   viewsets.GenericViewSet):
+    queryset = Genre.objects.all()
+    serializer_class = GenreSerializer
+    pagination_class = pagination.LimitOffsetPagination
+    lookup_field = 'slug'
+
+
+class TitlesViewSet(ExtendedFilter, viewsets.ModelViewSet):
+    queryset = Title.objects.all()
+    pagination_class = pagination.LimitOffsetPagination
+    http_method_names = ['get', 'post', 'patch', 'delete']
+
+    def get_serializer_class(self):
+        if self.action in ('list', 'retrieve'):
+            return TitleReadSerializer
+        return TitleWriteSerializer
+
+
+class ReviewViewSet(viewsets.ModelViewSet):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
+
+
+class CommentViewSet(viewsets.ModelViewSet):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
