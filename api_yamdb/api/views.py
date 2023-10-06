@@ -78,10 +78,10 @@ class CategoryViewSet(FilterByName, mixins.ListModelMixin,
                       mixins.DestroyModelMixin,
                       viewsets.GenericViewSet):
     queryset = Category.objects.all()
+    permission_classes = (IsAdminOrReadOnly, )
     serializer_class = CategorySerializer
     pagination_class = pagination.LimitOffsetPagination
     lookup_field = 'slug'
-    permission_classes = (IsAdminOrReadOnly, )
 
 
 class GenreViewSet(FilterByName, mixins.ListModelMixin,
@@ -89,17 +89,17 @@ class GenreViewSet(FilterByName, mixins.ListModelMixin,
                    mixins.DestroyModelMixin,
                    viewsets.GenericViewSet):
     queryset = Genre.objects.all()
+    permission_classes = (IsAdminOrReadOnly, )
     serializer_class = GenreSerializer
     pagination_class = pagination.LimitOffsetPagination
     lookup_field = 'slug'
-    permission_classes = (IsAdminOrReadOnly, )
 
 
 class TitlesViewSet(ExtendedFilter, viewsets.ModelViewSet):
     queryset = Title.objects.all()
+    permission_classes = (IsAdminOrReadOnly, )
     pagination_class = pagination.LimitOffsetPagination
     http_method_names = ['get', 'post', 'patch', 'delete']
-    permission_classes = (AllowAny, )
 
     def get_serializer_class(self):
         if self.action in ('list', 'retrieve'):
