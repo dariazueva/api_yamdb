@@ -52,26 +52,37 @@ class CustomUserSerializer(serializers.ModelSerializer):
         return data
 
 
-class UserRegistrationSerializer(CustomUserSerializer):
+class UserRegistrationSerializer(serializers.Serializer):
     """Сериализатор для модели пользователя."""
+    email = serializers.EmailField(
+        max_length=254,
+        required=True,
+    )
+
+    username = serializers.CharField(
+        max_length=150,
+        required=True,
+        validators=[
+            RegexValidator(
+                regex=USERNAME_REGEX,
+                message='Имя пользователя может содержать '
+                'только буквы, цифры и следующие символы: '
+                '@/./+/-/_',
+            ),
+        ],
+    )
 
     class Meta:
-        model = CustomUser
         fields = ('username', 'email')
-    
-    def create(self, validated_data):
-        user = CustomUser(
-            email=validated_data['email'],
-            username=validated_data['username']
-        )
-        user.save()
-        return user
 
     def create(self, validated_data):
         username = validated_data['username']
         email = validated_data['email']
-        user = CustomUser.objects.create(username=username, email=email)
-        # confirmation_code = str(randint(11111, 99999))
+
+        user, created = CustomUser.objects.get_or_create(
+            username=username,
+            email=email
+        )
         confirmation_code = default_token_generator.make_token(user)
         Util.send_mail(validated_data['email'], confirmation_code)
         return user
@@ -120,14 +131,16 @@ class CustomTokenObtainSerializer(TokenObtainSerializer):
 
 class CustomUserSerializer(serializers.ModelSerializer):
     username = serializers.CharField(
-        validators=[UniqueValidator(queryset=CustomUser.objects.all())],
+        validators=[
+            UniqueValidator(queryset=CustomUser.objects.all()),
+            RegexValidator(regex=USERNAME_REGEX)
+        ],
         max_length=150,
         required=True,
     )
     email = serializers.EmailField(
         validators=[
-            UniqueValidator(queryset=CustomUser.objects.all()),
-            RegexValidator(regex=USERNAME_REGEX)],
+            UniqueValidator(queryset=CustomUser.objects.all())],
         max_length=254,
         required=True,
     )

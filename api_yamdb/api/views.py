@@ -26,6 +26,11 @@ class UserRegistrationViewSet(CreateModelMixin, viewsets.GenericViewSet):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        user = CustomUser.objects.filter(
+            username=request.data['username']).first()
+        email = CustomUser.objects.filter(email=request.data['email']).first()
+        if user or email:
+            return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
         serializer.save()
 
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -55,8 +60,8 @@ class CustomUserViewSet(viewsets.ModelViewSet):
             serializer_class=CustomUserSerializer)
     def me(self, request):
         serializer = CustomUserSerializer(request.user,
-                                    data=request.data,
-                                    partial=True)
+                                          data=request.data,
+                                          partial=True)
         if request.user.role == 'admin' or request.user.role == 'moderator':
             serializer.is_valid(raise_exception=True)
             serializer.save()
