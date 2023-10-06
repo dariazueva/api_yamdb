@@ -21,4 +21,4 @@ urlpatterns = [
         ),
         name='signup'
     ),
-    path('auth/token/', TokenObtainView.as_view(), name='token_obtain'),
+    path('auth/token/', TokenObtainView.as_view(), name='token_obtain'),]
