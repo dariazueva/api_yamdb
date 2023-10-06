@@ -191,11 +191,11 @@ class TitleReadSerializer(serializers.ModelSerializer):
 
     def get_rating(self, obj):
         reviews = obj.review_set.all()
-        average_score = reviews.aggregate(Avg('score'))['score__avg']
-        if average_score is not None:
-            return round(average_score)
-        return None
-        return round(average_score) if average_score is not None else None
+        average_score = reviews.aggregate(Avg('score')).get('score__avg')
+        return (round(average_score)
+                if average_score is not None
+                else average_score
+                )
 
 
 class TitleWriteSerializer(serializers.ModelSerializer):
@@ -217,8 +217,11 @@ class TitleWriteSerializer(serializers.ModelSerializer):
 
     def get_rating(self, obj):
         reviews = obj.review_set.all()
-        average_score = reviews.aggregate(Avg('score'))['score__avg']
-        return round(average_score) if average_score is not None else 0
+        average_score = reviews.aggregate(Avg('score')).get('score__avg')
+        return (round(average_score)
+                if average_score is not None
+                else average_score
+                )
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)

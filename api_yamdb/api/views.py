@@ -99,7 +99,7 @@ class TitlesViewSet(ExtendedFilter, viewsets.ModelViewSet):
     queryset = Title.objects.all()
     pagination_class = pagination.LimitOffsetPagination
     http_method_names = ['get', 'post', 'patch', 'delete']
-    permission_classes = (IsAdminOrReadOnly, )
+    permission_classes = (AllowAny, )
 
     def get_serializer_class(self):
         if self.action in ('list', 'retrieve'):
