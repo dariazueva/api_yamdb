@@ -131,7 +131,7 @@ class CommentViewSet(viewsets.ModelViewSet):
 
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
-    permission_classes = (IsAuthorModeratorAdmin,)
+    permission_classes = (IsAuthenticatedOrReadOnly, IsAuthorModeratorAdmin)
     http_method_names = ['get', 'post', 'patch', 'delete']
 
     def get_queryset(self):
@@ -147,7 +147,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
         author = self.request.user
 
         if isinstance(author, AnonymousUser):
-            author = "Анонимный пользователь"
+            author.id = 0
 
         if Review.objects.filter(title=title, author=author).exists():
             return Response({'detail': 'Отзыв от этого пользователя '

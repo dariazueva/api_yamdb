@@ -234,6 +234,7 @@ class ReviewSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(
         slug_field='username',
         read_only=True
+
     )
 
     def validate_score(self, value):

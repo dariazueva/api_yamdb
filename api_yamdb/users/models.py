@@ -5,7 +5,6 @@ ADMIN = 'admin'
 MODERATOR = 'moderator'
 USER = 'user'
 USER_ROLES = [
-    (AnonymousUser, 'Anon'),
     (USER, 'user'),
     (MODERATOR, 'moderator'),
     (ADMIN, 'admin'),
