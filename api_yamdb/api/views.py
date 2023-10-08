@@ -131,7 +131,7 @@ class CommentViewSet(viewsets.ModelViewSet):
 
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
-    permission_classes = (IsAdminOrReadOnly, IsAuthorModeratorAdmin,)
+    permission_classes = (IsAuthorModeratorAdmin,)
     http_method_names = ['get', 'post', 'patch', 'delete']
 
     def get_queryset(self):
