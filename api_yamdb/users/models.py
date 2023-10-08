@@ -1,10 +1,11 @@
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, AnonymousUser
 from django.db import models
 
 ADMIN = 'admin'
 MODERATOR = 'moderator'
 USER = 'user'
 USER_ROLES = [
+    (AnonymousUser, 'Anon'),
     (USER, 'user'),
     (MODERATOR, 'moderator'),
     (ADMIN, 'admin'),

@@ -181,85 +181,49 @@ class TitleGenreSerializer(serializers.ModelSerializer):
 
 
 class TitleReadSerializer(serializers.ModelSerializer):
-    genre = GenreSerializer(many=True)
-    category = CategorySerializer()
-    rating = serializers.SerializerMethodField()
-
-    class Meta:
-        model = Title
-        fields = ('id', 'name', 'year', 'rating',
-                  'description', 'genre', 'category')
-
-    def get_rating(self, obj):
-        reviews = obj.review_set.all()
-        average_score = reviews.aggregate(Avg('score')).get('score__avg')
-        return (round(average_score)
-                if average_score is not None
-                else average_score
-                )
-
-
-class TitleWriteSerializer(serializers.ModelSerializer):
-    genre = serializers.SlugRelatedField(
-        many=True,
-        slug_field='slug',
-        queryset=Genre.objects.all()
-    )
-    category = serializers.SlugRelatedField(
-        slug_field='slug',
-        queryset=Category.objects.all()
-    )
-    rating = serializers.SerializerMethodField()
-
-    class Meta:
-        model = Title
-        fields = ('id', 'name', 'year', 'rating',
-                  'description', 'genre', 'category')
-
-    def get_rating(self, obj):
-        reviews = obj.review_set.all()
-        average_score = reviews.aggregate(Avg('score')).get('score__avg')
-        return (round(average_score)
-                if average_score is not None
-                else average_score
-                )
-
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        representation['genre'] = GenreSerializer(
-            instance.genre.all(),
-            many=True
-        ).data
-        representation['category'] = CategorySerializer(instance.category).data
-        return representation
-
-    def validate_year(self, value):
-        year = dt.date.today().year
-        if (year < value):
-            raise serializers.ValidationError(
-                'Год выпуска не может быть больше текущего')
-        return value
-
-    def validate_rating(self, value):
-        if value < 0 or value > 10:
-            raise serializers.ValidationError('Рэйтинг должен быть от 0 до 10')
-        return value
-
-
-class TitleWriteSerializer(serializers.ModelSerializer):
-    category = serializers.SlugRelatedField(
-        queryset=Category.objects.all(),
-        slug_field='slug'
-    )
-    genre = serializers.SlugRelatedField(
-        queryset=Genre.objects.all(),
-        slug_field='slug',
-        many=True
-    )
+    genre = GenreSerializer(many=True, read_only=True)
+    category = CategorySerializer(read_only=True)
+    rating = serializers.IntegerField(read_only=True)
 
     class Meta:
         fields = '__all__'
         model = Title
+
+
+class TitleWriteSerializer(serializers.ModelSerializer):
+    genre = serializers.SlugRelatedField(
+        slug_field='slug',
+        queryset=Genre.objects.all(),
+        many=True
+    )
+    category = serializers.SlugRelatedField(
+        slug_field='slug',
+        queryset=Category.objects.all())
+
+    class Meta:
+        fields = '__all__'
+        model = Title
+
+    # def to_representation(self, instance):
+    #     representation = super().to_representation(instance)
+    #     representation['genre'] = GenreSerializer(
+    #         instance.genre.all(),
+    #         many=True
+    #     ).data
+    #     representation['category'] = CategorySerializer(instance.category).data
+    #     return representation
+
+    # def validate_year(self, value):
+    #     year = dt.date.today().year
+    #     if (year < value):
+    #         raise serializers.ValidationError(
+    #             'Год выпуска не может быть больше текущего')
+    #     return value
+
+    # def validate_rating(self, value):
+    #     if value < 0 or value > 10:
+    #         raise serializers.ValidationError('Рэйтинг должен быть от 0 до 10')
+    #     return value
 
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -273,8 +237,9 @@ class ReviewSerializer(serializers.ModelSerializer):
     )
 
     def validate_score(self, value):
-        if 0 > value > 10:
-            raise serializers.ValidationError('Оценка по 10-бальной шкале!')
+        if value < 0 or value > 10:
+            raise serializers.ValidationError(
+                'Оценка должна быть в диапазоне от 0 до 10!')
         return value
 
     def validate(self, data):
