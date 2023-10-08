@@ -31,5 +31,3 @@ pytest-django==4.4.0
 pytest-pythonpath==0.7.3
 django-import-export
 python-dotenv
-django-import-export
-python-dotenv

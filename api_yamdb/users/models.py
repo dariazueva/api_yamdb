@@ -1,4 +1,4 @@
-from django.contrib.auth.models import AbstractUser, Group, Permission
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 ADMIN = 'admin'
@@ -12,18 +12,21 @@ USER_ROLES = [
 
 
 class CustomUser(AbstractUser):
-    # Your custom fields and modifications go here
+    """Кастомная модель пользователя."""
 
-    # Add related_name to groups and user_permissions
-    groups = models.ManyToManyField(
-        Group,
-        verbose_name=_('groups'),
-        blank=True,
-        related_name='custom_users'  # Choose a related_name that makes sense
-    )
-    user_permissions = models.ManyToManyField(
-        Permission,
-        verbose_name=_('user permissions'),
-        blank=True,
-        related_name='custom_users_permissions'  # Choose a related_name that makes sense
-    )
+    username = models.CharField('Логин', max_length=150, unique=True)
+    email = models.EmailField('Почта', max_length=254, unique=True)
+    first_name = models.CharField('Имя', max_length=150, blank=True)
+    last_name = models.CharField('Фамилия', max_length=150, blank=True)
+    bio = models.CharField('Биография', max_length=256, blank=True)
+    role = models.CharField('Статус', max_length=50, blank=False,
+                            choices=USER_ROLES, default='user')
+    confirmation_code = models.CharField(
+        verbose_name="Код подтверждения", max_length=150)
+
+    class Meta:
+        verbose_name = 'Пользователь'
+        verbose_name_plural = 'Пользователи'
+
+    def __str__(self):
+        return self.username

@@ -11,6 +11,7 @@ router_version1.register(r'categories', CategoryViewSet)
 router_version1.register(r'genres', GenreViewSet)
 router_version1.register(r'titles', TitlesViewSet)
 
+
 urlpatterns = [
     path('', include(router_version1.urls)),
     path(
@@ -20,4 +21,4 @@ urlpatterns = [
         ),
         name='signup'
     ),
-    path('auth/token/', TokenObtainView.as_view(), name='token_obtain'), ]
+    path('auth/token/', TokenObtainView.as_view(), name='token_obtain'),]
