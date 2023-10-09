@@ -1,5 +1,6 @@
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets, mixins, pagination
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
@@ -10,6 +11,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.db.models import Avg
 from django.contrib.auth.models import AnonymousUser
+from .mixins import CategoryGenreMixin
 
 from api.permissions import IsAdmin, IsAdminOrReadOnly, IsAuthorModeratorAdmin
 from api.serializers import (CustomTokenObtainSerializer, CustomUserSerializer,
@@ -20,13 +22,11 @@ from reviews.models import Category, Genre, Title, Review, Comment
 from .serializers import (CategorySerializer, GenreSerializer,
                           ReviewSerializer, CommentSerializer,
                           TitleReadSerializer, TitleWriteSerializer)
-from .filter import FilterByName, ExtendedFilter
+from .filter import TitleFilter
 
 
 @method_decorator(csrf_exempt, name='dispatch')
 class UserRegistrationViewSet(CreateModelMixin, viewsets.GenericViewSet):
-    """Создание нового пользователя."""
-
     serializer_class = UserRegistrationSerializer
     queryset = CustomUser.objects.all()
     permission_classes = (AllowAny,)
@@ -45,8 +45,6 @@ class TokenObtainView(TokenObtainPairView):
 
 
 class CustomUserViewSet(viewsets.ModelViewSet):
-    """ViewSet для пользователей."""
-
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserSerializer
     filter_backends = (filters.SearchFilter,)
@@ -76,34 +74,23 @@ class CustomUserViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class CategoryViewSet(FilterByName, mixins.ListModelMixin,
-                      mixins.CreateModelMixin,
-                      mixins.DestroyModelMixin,
-                      viewsets.GenericViewSet):
+class CategoryViewSet(CategoryGenreMixin):
     queryset = Category.objects.all()
-    permission_classes = (IsAdminOrReadOnly, )
     serializer_class = CategorySerializer
-    pagination_class = pagination.LimitOffsetPagination
-    lookup_field = 'slug'
 
 
-class GenreViewSet(FilterByName, mixins.ListModelMixin,
-                   mixins.CreateModelMixin,
-                   mixins.DestroyModelMixin,
-                   viewsets.GenericViewSet):
+class GenreViewSet(CategoryGenreMixin):
     queryset = Genre.objects.all()
-    permission_classes = (IsAdminOrReadOnly, )
     serializer_class = GenreSerializer
-    pagination_class = pagination.LimitOffsetPagination
-    lookup_field = 'slug'
 
 
-class TitlesViewSet(ExtendedFilter, viewsets.ModelViewSet):
-    queryset = Title.objects.annotate(rating=Avg('reviews__score'))
-    permission_classes = (IsAdminOrReadOnly, )
-    pagination_class = pagination.LimitOffsetPagination
-
-    http_method_names = ['get', 'post', 'patch', 'delete']
+class TitlesViewSet(viewsets.ModelViewSet):
+    queryset = Title.objects.annotate(
+        rating=Avg('reviews__score')
+    ).all()
+    permission_classes = (IsAdminOrReadOnly,)
+    filter_backends = (DjangoFilterBackend, )
+    filterset_class = TitleFilter
 
     def get_serializer_class(self):
         if self.action in ('list', 'retrieve'):

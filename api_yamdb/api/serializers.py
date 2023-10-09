@@ -19,7 +19,6 @@ USERNAME_REGEX = r'^[\w.@+-]+$'
 
 
 class UserRegistrationSerializer(serializers.Serializer):
-    """Сериализатор для модели пользователя."""
     email = serializers.EmailField(
         max_length=254,
         required=True,
@@ -32,8 +31,8 @@ class UserRegistrationSerializer(serializers.Serializer):
             RegexValidator(
                 regex=USERNAME_REGEX,
                 message='Имя пользователя может содержать '
-                'только буквы, цифры и следующие символы: '
-                '@/./+/-/_',
+                        'только буквы, цифры и следующие символы: '
+                        '@/./+/-/_',
             ),
         ],
     )
@@ -51,7 +50,7 @@ class UserRegistrationSerializer(serializers.Serializer):
             if existing_user_by_email.username != username:
                 raise serializers.ValidationError(
                     {'error': 'User with this email already exists '
-                     'but with a different username.'},
+                              'but with a different username.'},
                     code=status.HTTP_400_BAD_REQUEST
                 )
             return existing_user_by_email
@@ -63,7 +62,7 @@ class UserRegistrationSerializer(serializers.Serializer):
             if existing_user_by_username.email != email:
                 raise serializers.ValidationError(
                     {'error': 'User with this username already exists '
-                     'but with a different email.'},
+                              'but with a different email.'},
                     code=status.HTTP_400_BAD_REQUEST
                 )
             return existing_user_by_username
@@ -82,8 +81,6 @@ class UserRegistrationSerializer(serializers.Serializer):
 
 
 class CustomTokenObtainSerializer(TokenObtainSerializer):
-    """Получение токена."""
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields[self.username_field] = serializers.CharField()
@@ -181,8 +178,11 @@ class TitleGenreSerializer(serializers.ModelSerializer):
 
 
 class TitleReadSerializer(serializers.ModelSerializer):
-    genre = GenreSerializer(many=True, read_only=True)
     category = CategorySerializer(read_only=True)
+    genre = GenreSerializer(
+        read_only=True,
+        many=True
+    )
     rating = serializers.IntegerField(read_only=True)
 
     class Meta:
@@ -203,27 +203,6 @@ class TitleWriteSerializer(serializers.ModelSerializer):
     class Meta:
         fields = '__all__'
         model = Title
-
-    # def to_representation(self, instance):
-    #     representation = super().to_representation(instance)
-    #     representation['genre'] = GenreSerializer(
-    #         instance.genre.all(),
-    #         many=True
-    #     ).data
-    #     representation['category'] = CategorySerializer(instance.category).data
-    #     return representation
-
-    # def validate_year(self, value):
-    #     year = dt.date.today().year
-    #     if (year < value):
-    #         raise serializers.ValidationError(
-    #             'Год выпуска не может быть больше текущего')
-    #     return value
-
-    # def validate_rating(self, value):
-    #     if value < 0 or value > 10:
-    #         raise serializers.ValidationError('Рэйтинг должен быть от 0 до 10')
-    #     return value
 
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -249,8 +228,8 @@ class ReviewSerializer(serializers.ModelSerializer):
         title_id = self.context.get('view').kwargs.get('title_id')
         title = get_object_or_404(Title, pk=title_id)
         if (
-            request.method == 'POST'
-            and Review.objects.filter(title=title, author=author).exists()
+                request.method == 'POST'
+                and Review.objects.filter(title=title, author=author).exists()
         ):
             raise ValidationError('Может существовать только один отзыв!')
         return data

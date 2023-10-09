@@ -1,13 +1,13 @@
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters
+from django_filters import rest_framework as filters
+
+from reviews.models import Title
 
 
-class FilterByName():
-    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
-    filterset_fields = ('name',)
-    search_fields = ('name',)
+class TitleFilter(filters.FilterSet):
+    category = filters.CharFilter(field_name='category__slug')
+    genre = filters.CharFilter(field_name='genre__slug')
+    name = filters.CharFilter(field_name='name', lookup_expr='icontains')
 
-
-class ExtendedFilter(FilterByName):
-    filterset_fields = ('category', 'genre', 'year', 'name')
-    search_fields = ('category', 'genre', 'year', 'name')
+    class Meta:
+        model = Title
+        fields = '__all__'
