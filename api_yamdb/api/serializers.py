@@ -2,23 +2,23 @@ import re
 
 from django.contrib.auth.tokens import default_token_generator
 from django.core.validators import RegexValidator
-from django.db.models import Avg
 from rest_framework import serializers, status
 from rest_framework.exceptions import NotFound, ValidationError
 from rest_framework.generics import get_object_or_404
 from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.serializers import TokenObtainSerializer
 
-from reviews.models import Category, Genre, Title, Review, Comment, TitleGenre
-import datetime as dt
-
 from api.utils import Util
+from reviews.models import Category, Genre, Title, Review, Comment, TitleGenre
 from users.models import CustomUser
+
 
 USERNAME_REGEX = r'^[\w.@+-]+$'
 
 
 class UserRegistrationSerializer(serializers.Serializer):
+    """Сериализатор для регистрации пользователя."""
+
     email = serializers.EmailField(
         max_length=254,
         required=True,
@@ -81,6 +81,8 @@ class UserRegistrationSerializer(serializers.Serializer):
 
 
 class CustomTokenObtainSerializer(TokenObtainSerializer):
+    """Сериализатор для получения пользовательского токена."""
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields[self.username_field] = serializers.CharField()
@@ -113,6 +115,8 @@ class CustomTokenObtainSerializer(TokenObtainSerializer):
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
+    """Сериализатор для пользовательской модели."""
+
     username = serializers.CharField(
         validators=[
             UniqueValidator(queryset=CustomUser.objects.all()),
@@ -135,6 +139,8 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
 
 class CategorySerializer(serializers.ModelSerializer):
+    """Сериализатор для категорий."""
+
     name = serializers.CharField(
         max_length=256,
         validators=[
@@ -152,6 +158,8 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class GenreSerializer(serializers.ModelSerializer):
+    """Сериализатор для жанров."""
+
     name = serializers.CharField(
         max_length=256,
         validators=[
@@ -169,6 +177,8 @@ class GenreSerializer(serializers.ModelSerializer):
 
 
 class TitleGenreSerializer(serializers.ModelSerializer):
+    """Сериализатор для связи между названием и жанром."""
+
     name = serializers.CharField()
     slug = serializers.CharField()
 
@@ -178,6 +188,8 @@ class TitleGenreSerializer(serializers.ModelSerializer):
 
 
 class TitleReadSerializer(serializers.ModelSerializer):
+    """Сериализатор для чтения информации о названии."""
+
     category = CategorySerializer(read_only=True)
     genre = GenreSerializer(
         read_only=True,
@@ -191,6 +203,8 @@ class TitleReadSerializer(serializers.ModelSerializer):
 
 
 class TitleWriteSerializer(serializers.ModelSerializer):
+    """Сериализатор для записи информации о названии."""
+
     genre = serializers.SlugRelatedField(
         slug_field='slug',
         queryset=Genre.objects.all(),
@@ -206,6 +220,8 @@ class TitleWriteSerializer(serializers.ModelSerializer):
 
 
 class ReviewSerializer(serializers.ModelSerializer):
+    """Сериализатор для отзывов."""
+
     title = serializers.SlugRelatedField(
         slug_field='name',
         read_only=True
@@ -240,6 +256,8 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
+    """Сериализатор для комментариев."""
+
     review = serializers.SlugRelatedField(
         slug_field='text',
         read_only=True
