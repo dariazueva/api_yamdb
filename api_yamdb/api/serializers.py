@@ -8,10 +8,9 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.serializers import TokenObtainSerializer
 
-from api.utils import Util
-from reviews.models import Category, Genre, Title, Review, Comment, TitleGenre
+from api.utils import send_code_to_mail
+from reviews.models import Category, Comment, Genre, Review, Title, TitleGenre
 from users.models import CustomUser
-
 
 USERNAME_REGEX = r'^[\w.@+-]+$'
 
@@ -68,7 +67,7 @@ class UserRegistrationSerializer(serializers.Serializer):
             return existing_user_by_username
         user = CustomUser.objects.create(email=email, username=username)
         confirmation_code = default_token_generator.make_token(user)
-        Util.send_mail(email, confirmation_code)
+        send_code_to_mail(email, confirmation_code)
         return user
 
     def validate(self, data):
@@ -107,7 +106,7 @@ class CustomTokenObtainSerializer(TokenObtainSerializer):
         if str(user.confirmation_code) != attrs['confirmation_code']:
             raise ValidationError(
                 {'confirmation_code': 'Неверный код подтверждения'},
-                code="invalid_confirmation_code",
+                code='invalid_confirmation_code',
             )
         self.user = user
         user.save()
@@ -268,6 +267,5 @@ class CommentSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        fields = '__all' \
-                 '__'
+        fields = '__all__'
         model = Comment

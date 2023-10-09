@@ -1,8 +1,9 @@
-from import_export import resources
-from import_export.admin import ImportExportModelAdmin
 from django.contrib import admin
 from django.db.models import Avg
-from .models import Category, Comment, Genre, Review, TitleGenre, Title
+from import_export import resources
+from import_export.admin import ImportExportModelAdmin
+
+from reviews.models import Category, Comment, Genre, Review, Title, TitleGenre
 
 admin.site.empty_value_display = 'Не задано'
 

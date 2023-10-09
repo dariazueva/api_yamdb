@@ -1,11 +1,11 @@
-from django.db import models
 from django.contrib.auth import get_user_model
+from django.db import models
 
 User = get_user_model()
 
 
 class Category(models.Model):
-    """Модель "Категория"."""
+    """Модель 'Категория'."""
 
     name = models.CharField(
         max_length=256,
@@ -27,7 +27,7 @@ class Category(models.Model):
 
 
 class Genre(models.Model):
-    """Модель "Жанр"."""
+    """Модель 'Жанр'."""
 
     name = models.CharField(
         max_length=256,
@@ -49,7 +49,7 @@ class Genre(models.Model):
 
 
 class Title(models.Model):
-    """Модель "Произведение"."""
+    """Модель 'Произведение'."""
 
     name = models.CharField(max_length=256,
                             verbose_name='Произведение',
@@ -88,7 +88,7 @@ class Title(models.Model):
 
 
 class TitleGenre(models.Model):
-    """Модель "Произведение - Жанр"."""
+    """Модель 'Произведение - Жанр'."""
 
     title_id = models.ForeignKey(
         Title, on_delete=models.CASCADE,
@@ -108,7 +108,7 @@ class TitleGenre(models.Model):
 
 
 class Review(models.Model):
-    """Модель "Отзыв"."""
+    """Модель 'Отзыв'."""
 
     title = models.ForeignKey(
         Title, on_delete=models.CASCADE, related_name='reviews')
@@ -134,7 +134,7 @@ class Review(models.Model):
 
 
 class Comment(models.Model):
-    """Модель "Комментарий"."""
+    """Модель 'Комментарий'."""
 
     author = models.ForeignKey(
         User, on_delete=models.CASCADE

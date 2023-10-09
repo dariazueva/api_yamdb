@@ -1,5 +1,6 @@
-from rest_framework import viewsets, filters
-from .permissions import IsAdminOrReadOnly
+from rest_framework import filters, viewsets
+
+from api.permissions import IsAdminOrReadOnly
 
 
 class CategoryGenreMixin(viewsets.GenericViewSet,

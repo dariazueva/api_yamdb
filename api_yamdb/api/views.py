@@ -1,3 +1,5 @@
+from django.contrib.auth.models import AnonymousUser
+from django.db.models import Avg
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django_filters.rest_framework import DjangoFilterBackend
@@ -10,19 +12,17 @@ from rest_framework.permissions import (AllowAny, IsAuthenticated,
                                         IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
-from django.db.models import Avg
-from django.contrib.auth.models import AnonymousUser
 
-from .mixins import CategoryGenreMixin
+from api.filter import TitleFilter
+from api.mixins import CategoryGenreMixin
 from api.permissions import IsAdmin, IsAdminOrReadOnly, IsAuthorModeratorAdmin
-from api.serializers import (CustomTokenObtainSerializer, CustomUserSerializer,
+from api.serializers import (CategorySerializer, CommentSerializer,
+                             CustomTokenObtainSerializer, CustomUserSerializer,
+                             GenreSerializer, ReviewSerializer,
+                             TitleReadSerializer, TitleWriteSerializer,
                              UserRegistrationSerializer)
-from users.models import CustomUser
-from reviews.models import Category, Genre, Title, Review
-from .serializers import (CategorySerializer, CommentSerializer,
-                          ReviewSerializer, GenreSerializer,
-                          TitleReadSerializer, TitleWriteSerializer)
-from .filter import TitleFilter
+from reviews.models import Category, Genre, Review, Title
+from users.models import CustomUser, ADMIN, MODERATOR, USER
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -70,12 +70,12 @@ class CustomUserViewSet(viewsets.ModelViewSet):
         serializer = CustomUserSerializer(request.user,
                                           data=request.data,
                                           partial=True)
-        if request.user.role == 'admin' or request.user.role == 'moderator':
+        if request.user.role == ADMIN or request.user.role == MODERATOR:
             serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         serializer.is_valid(raise_exception=True)
-        serializer.save(role='user')
+        serializer.save(role=USER)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
