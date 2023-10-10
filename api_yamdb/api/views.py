@@ -22,7 +22,7 @@ from api.serializers import (CategorySerializer, CommentSerializer,
                              TitleReadSerializer, TitleWriteSerializer,
                              UserRegistrationSerializer)
 from reviews.models import Category, Genre, Review, Title
-from users.models import CustomUser, ADMIN, MODERATOR, USER
+from users.models import CustomUser
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -70,12 +70,12 @@ class CustomUserViewSet(viewsets.ModelViewSet):
         serializer = CustomUserSerializer(request.user,
                                           data=request.data,
                                           partial=True)
-        if request.user.role == ADMIN or request.user.role == MODERATOR:
+        if request.user.is_admin or request.user.is_moderator:
             serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         serializer.is_valid(raise_exception=True)
-        serializer.save(role=USER)
+        serializer.save(role=CustomUser.USER)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -140,7 +140,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         title = get_object_or_404(
             Title,
-            id=self.kwargs.get('title_id'))
+            id=self.kwargs.get('title_id'),)
         return title.reviews.all()
 
     def perform_create(self, serializer):
@@ -152,10 +152,10 @@ class ReviewViewSet(viewsets.ModelViewSet):
         if isinstance(author, AnonymousUser):
             author.id = 0
 
-        if Review.objects.filter(title=title, author=author).exists():
-            return Response({'detail': 'Отзыв от этого пользователя '
-                                       'уже существует '
-                                       'для данного произведения.'},
-                            status=status.HTTP_400_BAD_REQUEST)
+        # if Review.objects.filter(title=title, author=author).exists():
+        #     return Response({'detail': 'Отзыв от этого пользователя '
+        #                                'уже существует '
+        #                                'для данного произведения.'},
+        #                     status=status.HTTP_400_BAD_REQUEST)
 
         serializer.save(author=author, title=title)

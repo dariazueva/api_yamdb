@@ -55,9 +55,10 @@ class Title(models.Model):
                             verbose_name='Произведение',
                             help_text='Укажите название произведения'
                             )
-    year = models.IntegerField(
+    year = models.PositiveSmallIntegerField(
         verbose_name='Год произведения',
-        help_text='Укажите год произведения'
+        help_text='Укажите год произведения',
+        db_index=True
     )
     genre = models.ManyToManyField(
         Genre,
@@ -90,11 +91,11 @@ class Title(models.Model):
 class TitleGenre(models.Model):
     """Модель 'Произведение - Жанр'."""
 
-    title_id = models.ForeignKey(
+    title = models.ForeignKey(
         Title, on_delete=models.CASCADE,
         null=True,
         verbose_name='Название произведения')
-    genre_id = models.ForeignKey(
+    genre = models.ForeignKey(
         Genre, on_delete=models.CASCADE,
         null=True,
         verbose_name='Жанр произведения')
@@ -115,7 +116,7 @@ class Review(models.Model):
     author = models.ForeignKey(
         User, on_delete=models.CASCADE)
     text = models.TextField('Текст отзыва')
-    score = models.IntegerField('Оценка произведения')
+    score = models.PositiveSmallIntegerField('Оценка произведения')
     pub_date = models.DateTimeField(
         'Дата добавления',
         auto_now_add=True,

@@ -1,18 +1,18 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-ADMIN = 'admin'
-MODERATOR = 'moderator'
-USER = 'user'
-USER_ROLES = [
-    (USER, 'user'),
-    (MODERATOR, 'moderator'),
-    (ADMIN, 'admin'),
-]
-
 
 class CustomUser(AbstractUser):
     """Кастомная модель пользователя."""
+
+    ADMIN = 'admin'
+    MODERATOR = 'moderator'
+    USER = 'user'
+    USER_ROLES = [
+        (USER, 'user'),
+        (MODERATOR, 'moderator'),
+        (ADMIN, 'admin'),
+    ]
 
     username = models.CharField('Логин', max_length=150, unique=True)
     email = models.EmailField('Почта', max_length=254, unique=True)
@@ -30,3 +30,11 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.username
+
+    @property
+    def is_admin(self):
+        return self.role == self.ADMIN or self.is_staff
+
+    @property
+    def is_moderator(self):
+        return self.role == self.MODERATOR
