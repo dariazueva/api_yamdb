@@ -70,10 +70,7 @@ class CustomUserViewSet(viewsets.ModelViewSet):
         serializer = CustomUserSerializer(request.user,
                                           data=request.data,
                                           partial=True)
-        if request.user.is_admin or request.user.is_moderator:
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
+
         serializer.is_valid(raise_exception=True)
         serializer.save(role=CustomUser.USER)
         return Response(serializer.data, status=status.HTTP_200_OK)
