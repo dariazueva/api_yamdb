@@ -244,7 +244,7 @@ class ReviewSerializer(serializers.ModelSerializer):
         title = get_object_or_404(Title, pk=title_id)
         if (
                 request.method == 'POST'
-                and Review.objects.filter(title=title, author=author).exists()
+                and title.reviews.filter(author=author).exists()
         ):
             raise ValidationError('Может существовать только один отзыв!')
         return data
@@ -267,5 +267,5 @@ class CommentSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        fields = '__all__'
+        fields = ('id', 'author', 'review', 'text', 'pub_date')
         model = Comment

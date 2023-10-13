@@ -152,10 +152,4 @@ class ReviewViewSet(viewsets.ModelViewSet):
         if isinstance(author, AnonymousUser):
             author.id = 0
 
-        # if Review.objects.filter(title=title, author=author).exists():
-        #     return Response({'detail': 'Отзыв от этого пользователя '
-        #                                'уже существует '
-        #                                'для данного произведения.'},
-        #                     status=status.HTTP_400_BAD_REQUEST)
-
         serializer.save(author=author, title=title)
