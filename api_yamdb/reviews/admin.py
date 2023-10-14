@@ -95,8 +95,8 @@ class TitleGenreResource(resources.ModelResource):
 class TitleGenreAdmin(ImportExportModelAdmin):
     """Администратор для модели TitleGenre."""
     resource_classes = [TitleGenreResource]
-    search_fields = ('title_id', 'genre_id')
-    list_filter = ('genre_id',)
+    search_fields = ('title', 'genre')
+    list_filter = ('genre',)
 
 
 admin.site.register(TitleGenre, TitleGenreAdmin)
