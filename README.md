@@ -8,6 +8,10 @@
 * Просматривать, создавать и удалять категории и жанры.
 * Комментировать, смотреть, удалять и обновлять комментарии.
 
+### Основной стек технологий проекта:
+
+python, django, sqlite, django rest framework, simple jwt
+
 ### Как запустить проект:
 
 Клонировать репозиторий и перейти в него в командной строке:
@@ -23,7 +27,7 @@ cd api_yamdb
 Cоздать и активировать виртуальное окружение:
 
 ```
-python3 -m venv env
+python -m venv env
 ```
 
 * Если у вас Linux/macOS
@@ -39,7 +43,13 @@ python3 -m venv env
     ```
 
 ```
-python3 -m pip install --upgrade pip
+python -m pip install --upgrade pip
+```
+
+Создайте файл .env и заполните его своими данными по образцу:
+
+```
+SECRET_KEY = ваш-секретный-ключ
 ```
 
 Установить зависимости из файла requirements.txt:
@@ -51,11 +61,19 @@ pip install -r requirements.txt
 Выполнить миграции:
 
 ```
-python3 manage.py migrate
+python manage.py migrate
 ```
 
 Запустить проект:
 
 ```
-python3 manage.py runserver
+python manage.py runserver
 ```
+
+## Где посмотреть документацию:
+С ней можно ознакомиться по адресу http://127.0.0.1:8000/redoc/.
+
+## Авторы
+[Зуева Дарья] (https://github.com/dariazueva/) (Тимлид)
+[Андрей Киров] (https://github.com/FluckyGo) (Python-разработчик)
+[Георгий Медко] (https://github.com/lemonhoup7) (Python-разработчик)
