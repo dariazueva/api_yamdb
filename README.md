@@ -74,6 +74,6 @@ python manage.py runserver
 С ней можно ознакомиться по адресу http://127.0.0.1:8000/redoc/.
 
 ## Авторы
-[Зуева Дарья] (https://github.com/dariazueva/) (Тимлид)
-[Андрей Киров] (https://github.com/FluckyGo) (Python-разработчик)
-[Георгий Медко] (https://github.com/lemonhoup7) (Python-разработчик)
+* Зуева Дарья (https://github.com/dariazueva) (Тимлид)
+* Андрей Киров (https://github.com/FluckyGo) (Python-разработчик)
+* Георгий Медко (https://github.com/lemonhoup7) (Python-разработчик)
